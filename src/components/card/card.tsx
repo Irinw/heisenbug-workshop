@@ -59,13 +59,15 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function Card(props: ICard) {
     const classes = useStyles();
     const dispatch = useAppDispatch();
-    const countOfPurchases = useSelector(numberOfPurchasesSelector);
+    const [countOfPurchases, setCountOfPurchases] = useState(0);
 
     const addPurchaseCallback = () => {
+        setCountOfPurchases(count => ++count);
         dispatch(addPurchase(props));
     };
 
     const removePurchaseCallback = () => {
+        setCountOfPurchases(count => --count);
         dispatch(removePurchase(props));
     };
 

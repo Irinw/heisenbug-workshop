@@ -6,5 +6,5 @@ import searchSlice from './search.slice';
 export const rootReducer = combineReducers({
     cards: cardsSlice,
     purchases: purchaseSlice,
-    searchPattern: searchSlice
+    search: searchSlice
 })

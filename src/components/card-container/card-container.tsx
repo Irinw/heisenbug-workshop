@@ -14,7 +14,7 @@ const useStyles = makeStyles(() =>
     })
 );
 
-export default function CardContainer() {
+export default function CardContainer(props: any) {
     const classes = useStyles();
     const items = useSelector(filteredCardsSelector);
 

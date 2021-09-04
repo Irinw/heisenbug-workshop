@@ -3,11 +3,11 @@ import {initialState} from "./initial-state";
 import {ICard} from "../components/card/card.contracts";
 
 const cardsSlice = createSlice({
-    name: 'purchase',
+    name: 'cards',
     initialState: initialState.cards,
     reducers: {
         setCards(state: ICard[], action: PayloadAction<ICard[]>) {
-            state = action.payload;
+            return action.payload;
         }
     },
 });
