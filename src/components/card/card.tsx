@@ -1,4 +1,4 @@
-import React, {useState} from 'react';
+import React from 'react';
 import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
 import CardComponent from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
@@ -17,7 +17,7 @@ import {useAppDispatch} from "../../index";
 import {addPurchase, removePurchase} from "../../slices/purchase.slice";
 import {useSelector} from "react-redux";
 import {MAX_COUNT_OF_PURCHASES} from "../../constants/app.constants";
-import {numberOfPurchasesSelector} from "../../selectors/purchase-selector";
+import {numberOfPurchasesSelector, purchasesSelector} from "../../selectors/purchase-selector";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -61,17 +61,16 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function Card(props: CardProps) {
     const classes = useStyles();
     const dispatch = useAppDispatch();
-    const [countOfPurchases, setCountOfPurchases] = useState(0);
+    const purchases = useSelector(purchasesSelector);
+    const countOfPurchases = purchases.filter(purchase => purchase.id === props.id)?.length;
     const totalCountOfPurchases = useSelector(numberOfPurchasesSelector);
     const isAddButtonDisabled = totalCountOfPurchases >= MAX_COUNT_OF_PURCHASES;
 
     const addPurchaseCallback = () => {
-        setCountOfPurchases(count => ++count);
         dispatch(addPurchase(props));
     };
 
     const removePurchaseCallback = () => {
-        setCountOfPurchases(count => --count);
         dispatch(removePurchase(props));
     };
 
