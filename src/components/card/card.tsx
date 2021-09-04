@@ -12,11 +12,13 @@ import ShoppingCart from '@material-ui/icons/ShoppingCart';
 import {Fab} from "@material-ui/core";
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
-import { ICard } from './card.contracts';
+import {CardProps} from './card.contracts';
 import {useAppDispatch} from "../../index";
-import {useSelector} from "react-redux";
-import {numberOfPurchasesSelector} from "../../selectors/purchase-selector";
 import {addPurchase, removePurchase} from "../../slices/purchase.slice";
+import {useSelector} from "react-redux";
+import {MAX_COUNT_OF_PURCHASES} from "../../constants/app.constants";
+import {numberOfPurchasesSelector} from "../../selectors/purchase-selector";
+
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
         root: {
@@ -56,10 +58,12 @@ const useStyles = makeStyles((theme: Theme) =>
     }),
 );
 
-export default function Card(props: ICard) {
+export default function Card(props: CardProps) {
     const classes = useStyles();
     const dispatch = useAppDispatch();
     const [countOfPurchases, setCountOfPurchases] = useState(0);
+    const totalCountOfPurchases = useSelector(numberOfPurchasesSelector);
+    const isAddButtonDisabled = totalCountOfPurchases >= MAX_COUNT_OF_PURCHASES;
 
     const addPurchaseCallback = () => {
         setCountOfPurchases(count => ++count);
@@ -98,16 +102,28 @@ export default function Card(props: ICard) {
                 <IconButton
                     aria-label="add to favorites"
                     onClick={addPurchaseCallback}
+                    disabled={ isAddButtonDisabled }
                 >
                     <ShoppingCart/>
                 </IconButton>
                 }
                 {!showShoppingCart &&
                 <>
-                    <Fab size="small" color="primary" aria-label="add" onClick={addPurchaseCallback}>
+                    <Fab
+                        size="small"
+                        color="primary"
+                        aria-label="add"
+                        onClick={addPurchaseCallback}
+                        disabled={ isAddButtonDisabled }
+                    >
                         <AddIcon/>
                     </Fab>
-                    <Typography className={classes.actionText} variant="overline" display="block" gutterBottom>
+                    <Typography
+                        className={classes.actionText}
+                        variant="overline"
+                        display="block"
+                        gutterBottom
+                    >
                         { countOfPurchases } cats
                     </Typography>
                     <Fab size="small" color="primary" aria-label="remove" onClick={removePurchaseCallback}>

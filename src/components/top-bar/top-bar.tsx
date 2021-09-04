@@ -13,10 +13,13 @@ import {useAppDispatch} from "../../index";
 import {setSearchPattern} from "../../slices/search.slice";
 import {useSelector} from "react-redux";
 import {numberOfPurchasesSelector} from "../../selectors/purchase-selector";
+import {TopBarProps} from "./top-bar.contracts";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     flexGrow: 1,
+    minHeight: 60,
+    height: 60
   },
   menuButton: {
     marginRight: theme.spacing(2),
@@ -26,8 +29,6 @@ const useStyles = makeStyles((theme) => ({
     marginRight: -16
   },
   toolbar: {
-    minHeight: 36,
-    maxHeight: 36,
     alignItems: 'flex-start',
     paddingTop: theme.spacing(1),
     paddingBottom: theme.spacing(2),
@@ -80,7 +81,7 @@ const useStyles = makeStyles((theme) => ({
 }));
 
 
-export default function TopBar() {
+export default function TopBar(props: TopBarProps) {
   const classes = useStyles();
   const dispatch = useAppDispatch();
   const numberOfPurchases = useSelector(numberOfPurchasesSelector);
@@ -89,7 +90,7 @@ export default function TopBar() {
       (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
         dispatch(setSearchPattern(event.target.value));
       },
-      [],
+      [dispatch],
   );
   return (
       <div className={classNames(classes.root , 'top-bar')}>
@@ -122,9 +123,11 @@ export default function TopBar() {
             </div>
             <IconButton
                 className={ classes.shoppingCartButton }
+                disabled={ !numberOfPurchases }
                 aria-label="display more actions"
                 edge="end"
                 color="inherit"
+                onClick={ props.onShoppingCartClick }
             >
             <Badge
                 badgeContent={ numberOfPurchases }

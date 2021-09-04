@@ -9,12 +9,15 @@ const useStyles = makeStyles(() =>
         cardContainer: {
             display: 'flex',
             flexWrap: 'wrap',
-            justifyContent: 'space-between'
+            justifyContent: 'space-between',
+            marginLeft: 8,
+            marginRight: 8,
+            marginBottom: 20
         }
     })
 );
 
-export default function CardContainer(props: any) {
+export default function CardContainer() {
     const classes = useStyles();
     const items = useSelector(filteredCardsSelector);
 

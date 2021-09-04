@@ -1,3 +1,6 @@
+export interface CardProps extends ICard {
+
+}
 export interface ICard {
     id: string;
     name: string;
