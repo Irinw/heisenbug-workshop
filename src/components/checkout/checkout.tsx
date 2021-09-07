@@ -12,8 +12,13 @@ import PaymentForm from './payment-form';
 import Review from './review';
 import {CheckoutProps} from "./checkout.contracts";
 import {Modal} from "@material-ui/core";
-import {isReviewAvailableSelector} from "../../selectors/review-details-selector";
+import {
+    isPaymentDetailsAvailableSelector,
+    isReviewAvailableSelector,
+    orderInfoSelector
+} from "../../selectors/review-details-selector";
 import {useSelector} from "react-redux";
+import {useAppDispatch} from "../../index";
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -75,10 +80,16 @@ export default function Checkout(props: CheckoutProps) {
     const [activeStep, setActiveStep] = React.useState(0);
 
     const isReviewAvailable = useSelector(isReviewAvailableSelector);
-    const isNextButtonDisabled = !isReviewAvailable && activeStep === 1;
+    const isPaymentDetailsAvailable = useSelector(isPaymentDetailsAvailableSelector);
+    const isNextButtonDisabled = (!isReviewAvailable && activeStep === 1) || (!isPaymentDetailsAvailable && activeStep === 0);
+    const orderInfo = useSelector(orderInfoSelector);
+    const dispatch = useAppDispatch();
 
     const handleNext = () => {
         setActiveStep(activeStep + 1);
+        if(activeStep === steps.length - 1){
+            dispatch({ type: 'SUBMIT_ORDER' })
+        }
     };
 
     const handleBack = () => {
@@ -113,7 +124,7 @@ export default function Checkout(props: CheckoutProps) {
                                     Thank you for your order.
                                 </Typography>
                                 <Typography variant="subtitle1">
-                                    Your order number is #2001539. We have emailed your order confirmation, and will
+                                    Your order number is #{orderInfo.orderId}. We have emailed your order confirmation, and will
                                     send you an update when your order has shipped.
                                 </Typography>
                             </React.Fragment>

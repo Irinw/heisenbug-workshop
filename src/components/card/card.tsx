@@ -74,7 +74,7 @@ export default function Card(props: CardProps) {
         dispatch(removePurchase(props));
     };
 
-    const price = `$${props.adaptability}00`;
+    const price = `$${props.price}`;
     const showShoppingCart = countOfPurchases === 0;
 
     return (

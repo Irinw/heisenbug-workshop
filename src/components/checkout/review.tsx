@@ -6,9 +6,24 @@ import ListItem from '@material-ui/core/ListItem';
 import ListItemText from '@material-ui/core/ListItemText';
 import Grid from '@material-ui/core/Grid';
 import {useSelector} from "react-redux";
-import {purchasesSelector, purchaseTotalPrice} from "../../selectors/purchase-selector";
+import {groupedPurchasesSelector, purchaseTotalPrice} from "../../selectors/purchase-selector";
 import {addressDetailsSelector} from "../../selectors/address-details-selector";
 import {paymentDetailsSelector} from "../../selectors/payment-details-selector";
+import {GroupedPurchase} from "./review.contracts";
+import Badge from '@material-ui/core/Badge';
+import { Theme, withStyles, createStyles } from '@material-ui/core/styles';
+import ShoppingCartIcon from '@material-ui/icons/ShoppingCart';
+
+const StyledBadge = withStyles((theme: Theme) =>
+    createStyles({
+        badge: {
+            right: -3,
+            top: 13,
+            border: `2px solid ${theme.palette.background.paper}`,
+            padding: '0 4px',
+        },
+    }),
+)(Badge);
 
 const useStyles = makeStyles((theme) => ({
     listItem: {
@@ -20,11 +35,15 @@ const useStyles = makeStyles((theme) => ({
     title: {
         marginTop: theme.spacing(2),
     },
+    price: {
+        fontWeight: 'bold',
+        marginRight: 8
+    }
 }));
 
 export default function Review() {
     const classes = useStyles();
-    const purchases = useSelector(purchasesSelector);
+    const groupedPurchases = useSelector(groupedPurchasesSelector);
     const totalPrice = useSelector(purchaseTotalPrice);
     const addressDetails = useSelector(addressDetailsSelector);
     const paymentDetails = useSelector(paymentDetailsSelector);
@@ -35,10 +54,13 @@ export default function Review() {
                 Order summary
             </Typography>
             <List disablePadding>
-                {purchases.map((purchase) => (
+                {groupedPurchases.map(({purchase, count}: GroupedPurchase) => (
                     <ListItem className={classes.listItem} key={purchase.name}>
                         <ListItemText primary={purchase.name} secondary={purchase.temperament} />
-                        <Typography variant="body2">{`$${purchase.adaptability}00`}</Typography>
+                        <Typography className={ classes.price } variant="body2">{`$${purchase.price}`}</Typography>
+                        <StyledBadge badgeContent={count} color="secondary">
+                            <ShoppingCartIcon />
+                        </StyledBadge>
                     </ListItem>
                 ))}
                 <ListItem className={classes.listItem}>

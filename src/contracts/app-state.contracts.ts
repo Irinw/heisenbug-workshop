@@ -1,11 +1,16 @@
-import {ICard} from "../components/card/card.contracts";
+import {CatInfo} from "../components/card/card.contracts";
 
 export interface AppState {
-    cards: ICard[];
-    purchases: ICard[];
+    cards: CatInfo[];
+    purchases: CatInfo[];
     search: Search;
     addressDetails: AddressDetails;
     paymentDetails: PaymentDetails;
+    orderInfo: OrderInfo;
+}
+
+export interface OrderInfo {
+    orderId: string;
 }
 
 export interface Search {
