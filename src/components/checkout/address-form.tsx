@@ -2,7 +2,7 @@ import React, {ChangeEvent, useCallback} from 'react';
 import Grid from '@material-ui/core/Grid';
 import Typography from '@material-ui/core/Typography';
 import TextField from '@material-ui/core/TextField';
-import {useAppDispatch} from "../../index";
+import {useAppDispatch} from "../../configure-store";
 import {
     setAddressLine1,
     setAddressLine2,

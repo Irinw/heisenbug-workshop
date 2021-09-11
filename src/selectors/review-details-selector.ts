@@ -1,15 +1,12 @@
 import {AppState} from "../contracts/app-state.contracts";
 
-export const isReviewAvailableSelector = (state: AppState) =>
-    state.addressDetails.lastName &&
+export const isPaymentDetailsFormFilled = (state: AppState) =>
     state.paymentDetails.cvv &&
     state.paymentDetails.cardNumber &&
     state.paymentDetails.expiryDate &&
     state.paymentDetails.cardName;
 
-export const isPaymentDetailsAvailableSelector = (state: AppState) =>
-    state.addressDetails.state &&
-    state.addressDetails.addressLine2 &&
+export const isShippingAddressFormFilled = (state: AppState) =>
     state.addressDetails.addressLine1 &&
     state.addressDetails.city &&
     state.addressDetails.country &&

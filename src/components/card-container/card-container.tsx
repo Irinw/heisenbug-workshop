@@ -27,11 +27,7 @@ export default function CardContainer() {
 
     return (
         <div className={classes.cardContainer}>
-            {items.map(item =>
-                <Card
-                    {...item}
-                />
-            )}
+            {items.map(item => <Card key={item.id} {...item} /> )}
         </div>
     );
 }

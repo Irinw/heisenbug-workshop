@@ -8,7 +8,7 @@ import {
     setCvv,
     setExpiryDate
 } from "../../slices/payment-details.slice";
-import {useAppDispatch} from "../../index";
+import {useAppDispatch} from "../../configure-store";
 import {useSelector} from "react-redux";
 import {paymentDetailsSelector} from "../../selectors/payment-details-selector";
 

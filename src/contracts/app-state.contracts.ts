@@ -1,4 +1,4 @@
-import {CatInfo} from "../components/card/card.contracts";
+import { CatInfo } from "../api/contracts";
 
 export interface AppState {
     cards: CatInfo[];
@@ -10,7 +10,8 @@ export interface AppState {
 }
 
 export interface OrderInfo {
-    orderId: string;
+    orderId?: number;
+    inProgress: boolean;
 }
 
 export interface Search {

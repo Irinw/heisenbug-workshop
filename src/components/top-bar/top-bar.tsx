@@ -9,7 +9,7 @@ import SearchIcon from '@material-ui/icons/Search';
 import ShoppingCart from '@material-ui/icons/ShoppingCart';
 import classNames from 'classnames';
 import {Badge, InputBase} from "@material-ui/core";
-import {useAppDispatch} from "../../index";
+import {useAppDispatch} from "../../configure-store";
 import {setSearchPattern} from "../../slices/search.slice";
 import {useSelector} from "react-redux";
 import {numberOfPurchasesSelector} from "../../selectors/purchase-selector";

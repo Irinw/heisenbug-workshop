@@ -10,15 +10,16 @@ import Typography from '@material-ui/core/Typography';
 import AddressForm from './address-form';
 import PaymentForm from './payment-form';
 import Review from './review';
-import {CheckoutProps} from "./checkout.contracts";
-import {Modal} from "@material-ui/core";
+import { CheckoutProps } from "./checkout.contracts";
+import { Modal } from "@material-ui/core";
 import {
-    isPaymentDetailsAvailableSelector,
-    isReviewAvailableSelector,
+    isShippingAddressFormFilled,
+    isPaymentDetailsFormFilled,
     orderInfoSelector
 } from "../../selectors/review-details-selector";
-import {useSelector} from "react-redux";
-import {useAppDispatch} from "../../index";
+import { useSelector } from "react-redux";
+import { useAppDispatch } from "../../configure-store";
+import { OrderProcessing } from './order-processing';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -62,7 +63,7 @@ const useStyles = makeStyles((theme) => ({
 
 const steps = ['Shipping address', 'Payment details', 'Review your order'];
 
-function getStepContent(step : number) {
+function getStepContent(step: number) {
     switch (step) {
         case 0:
             return <AddressForm />;
@@ -77,82 +78,77 @@ function getStepContent(step : number) {
 
 export default function Checkout(props: CheckoutProps) {
     const classes = useStyles();
-    const [activeStep, setActiveStep] = React.useState(0);
 
-    const isReviewAvailable = useSelector(isReviewAvailableSelector);
-    const isPaymentDetailsAvailable = useSelector(isPaymentDetailsAvailableSelector);
-    const isNextButtonDisabled = (!isReviewAvailable && activeStep === 1) || (!isPaymentDetailsAvailable && activeStep === 0);
+    const step0done = useSelector(isShippingAddressFormFilled);
+    const step1done = useSelector(isPaymentDetailsFormFilled);
+    const [activeStep, setActiveStep] = React.useState(step0done ? step1done ? 2 : 1 : 0);
+
+    const isNextButtonDisabled = (!step1done && activeStep === 1) || (!step0done && activeStep === 0);
     const orderInfo = useSelector(orderInfoSelector);
     const dispatch = useAppDispatch();
 
     const handleNext = () => {
         setActiveStep(activeStep + 1);
-        if(activeStep === steps.length - 1){
+        if (activeStep === steps.length - 1) {
             dispatch({ type: 'SUBMIT_ORDER' })
         }
     };
-
     const handleBack = () => {
         setActiveStep(activeStep - 1);
+    };
+    const handleClose = () => {
+        if (orderInfo.inProgress) return;
+        props.hideCheckoutScreen();
     };
 
     return (
         <Modal
             open={true}
-            onClose={props.hideCheckoutScreen}
+            onClose={handleClose}
             aria-labelledby="simple-modal-title"
-            aria-describedby="simple-modal-description"
-        >
+            aria-describedby="simple-modal-description">
             <div className={classes.root}>
-            <CssBaseline />
-            <main className={classes.layout}>
-                <Paper className={classes.paper}>
-                    <Typography component="h1" variant="h4" align="center">
-                        Checkout
-                    </Typography>
-                    <Stepper activeStep={activeStep} className={classes.stepper}>
-                        {steps.map((label) => (
-                            <Step key={label}>
-                                <StepLabel>{label}</StepLabel>
-                            </Step>
-                        ))}
-                    </Stepper>
-                    <React.Fragment>
-                        {activeStep === steps.length ? (
-                            <React.Fragment>
-                                <Typography variant="h5" gutterBottom>
-                                    Thank you for your order.
-                                </Typography>
-                                <Typography variant="subtitle1">
-                                    Your order number is #{orderInfo.orderId}. We have emailed your order confirmation, and will
-                                    send you an update when your order has shipped.
-                                </Typography>
-                            </React.Fragment>
-                        ) : (
-                            <React.Fragment>
-                                {getStepContent(activeStep)}
-                                <div className={classes.buttons}>
-                                    {activeStep !== 0 && (
-                                        <Button onClick={handleBack} className={classes.button}>
-                                            Back
+                <CssBaseline />
+                <main className={classes.layout}>
+                    <Paper className={classes.paper}>
+                        <Typography component="h1" variant="h4" align="center">
+                            Checkout
+                        </Typography>
+                        <Stepper activeStep={activeStep} className={classes.stepper}>
+                            {steps.map((label) => (
+                                <Step key={label}>
+                                    <StepLabel>{label}</StepLabel>
+                                </Step>
+                            ))}
+                        </Stepper>
+                        <React.Fragment>
+                            {activeStep === steps.length ? (
+                                <OrderProcessing {...orderInfo} />
+                            ) : (
+                                <React.Fragment>
+                                    {getStepContent(activeStep)}
+                                    <div className={classes.buttons}>
+                                        {activeStep !== 0 && (
+                                            <Button onClick={handleBack} className={classes.button}>
+                                                Back
+                                            </Button>
+                                        )}
+                                        <Button
+                                            variant="contained"
+                                            color="primary"
+                                            onClick={handleNext}
+                                            disabled={isNextButtonDisabled}
+                                            className={classes.button}
+                                        >
+                                            {activeStep === steps.length - 1 ? 'Place order' : 'Next'}
                                         </Button>
-                                    )}
-                                    <Button
-                                        variant="contained"
-                                        color="primary"
-                                        onClick={handleNext}
-                                        disabled={ isNextButtonDisabled }
-                                        className={classes.button}
-                                    >
-                                        {activeStep === steps.length - 1 ? 'Place order' : 'Next'}
-                                    </Button>
-                                </div>
-                            </React.Fragment>
-                        )}
-                    </React.Fragment>
-                </Paper>
-            </main>
-                </div>
+                                    </div>
+                                </React.Fragment>
+                            )}
+                        </React.Fragment>
+                    </Paper>
+                </main>
+            </div>
         </Modal>
     );
 }
