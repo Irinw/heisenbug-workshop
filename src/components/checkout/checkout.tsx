@@ -1,25 +1,23 @@
-import React from 'react';
-import { makeStyles } from '@material-ui/core/styles';
+import { Modal } from "@material-ui/core";
+import Button from '@material-ui/core/Button';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import Paper from '@material-ui/core/Paper';
-import Stepper from '@material-ui/core/Stepper';
 import Step from '@material-ui/core/Step';
 import StepLabel from '@material-ui/core/StepLabel';
-import Button from '@material-ui/core/Button';
+import Stepper from '@material-ui/core/Stepper';
+import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import AddressForm from './address-form';
-import PaymentForm from './payment-form';
-import Review from './review';
-import { CheckoutProps } from "./checkout.contracts";
-import { Modal } from "@material-ui/core";
-import {
-    isShippingAddressFormFilled,
-    isPaymentDetailsFormFilled,
-    orderInfoSelector
-} from "../../selectors/review-details-selector";
+import React from 'react';
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../configure-store";
+import { isAddressFormFilled as isAddressDetailsFormFilled } from '../../selectors/address-details-selector';
+import { isPaymentDetailsFormFilled } from '../../selectors/payment-details-selector';
+import { selectOrderInfo } from "../../selectors/review-details-selector";
+import AddressForm from './address-form';
+import { CheckoutProps } from "./checkout.contracts";
 import { OrderProcessing } from './order-processing';
+import PaymentForm from './payment-form';
+import Review from './review';
 
 const useStyles = makeStyles((theme) => ({
     root: {
@@ -61,16 +59,18 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const steps = ['Shipping address', 'Payment details', 'Review your order'];
+const steps = ['Review your order', 'Shipping address', 'Payment details', 'Order'];
 
 function getStepContent(step: number) {
     switch (step) {
         case 0:
-            return <AddressForm />;
-        case 1:
-            return <PaymentForm />;
-        case 2:
             return <Review />;
+        case 1:
+            return <AddressForm />;
+        case 2:
+            return <PaymentForm />;
+        case 3:
+            return <OrderProcessing />;
         default:
             throw new Error('Unknown step');
     }
@@ -79,18 +79,23 @@ function getStepContent(step: number) {
 export default function Checkout(props: CheckoutProps) {
     const classes = useStyles();
 
-    const step0done = useSelector(isShippingAddressFormFilled);
-    const step1done = useSelector(isPaymentDetailsFormFilled);
-    const [activeStep, setActiveStep] = React.useState(step0done ? step1done ? 2 : 1 : 0);
+    const step1done = useSelector(isAddressDetailsFormFilled);
+    const step2done = useSelector(isPaymentDetailsFormFilled);
+    const [activeStep, setActiveStep] = React.useState(0);
 
-    const isNextButtonDisabled = (!step1done && activeStep === 1) || (!step0done && activeStep === 0);
-    const orderInfo = useSelector(orderInfoSelector);
+    const isLastPage = activeStep === steps.length - 1;
+    const isBackShown = activeStep !== 0;
+    const isNextButtonDisabled = (!step1done && activeStep === 1) || (!step2done && activeStep === 2);
+    const nextButtonText = activeStep === 2 ? 'Place Order' : 'Next';
+
+    const orderInfo = useSelector(selectOrderInfo);
+
     const dispatch = useAppDispatch();
 
     const handleNext = () => {
         setActiveStep(activeStep + 1);
-        if (activeStep === steps.length - 1) {
-            dispatch({ type: 'SUBMIT_ORDER' })
+        if (activeStep === 2) {
+            dispatch({ type: 'SUBMIT_ORDER' });
         }
     };
     const handleBack = () => {
@@ -121,31 +126,24 @@ export default function Checkout(props: CheckoutProps) {
                                 </Step>
                             ))}
                         </Stepper>
-                        <React.Fragment>
-                            {activeStep === steps.length ? (
-                                <OrderProcessing {...orderInfo} />
-                            ) : (
-                                <React.Fragment>
-                                    {getStepContent(activeStep)}
-                                    <div className={classes.buttons}>
-                                        {activeStep !== 0 && (
-                                            <Button onClick={handleBack} className={classes.button}>
-                                                Back
-                                            </Button>
-                                        )}
-                                        <Button
-                                            variant="contained"
-                                            color="primary"
-                                            onClick={handleNext}
-                                            disabled={isNextButtonDisabled}
-                                            className={classes.button}
-                                        >
-                                            {activeStep === steps.length - 1 ? 'Place order' : 'Next'}
-                                        </Button>
-                                    </div>
-                                </React.Fragment>
-                            )}
-                        </React.Fragment>
+                        {getStepContent(activeStep)}
+                        {!isLastPage &&
+                            <div className={classes.buttons}>
+                                {isBackShown && (
+                                    <Button onClick={handleBack} className={classes.button}>
+                                        Back
+                                    </Button>
+                                )}
+                                <Button
+                                    variant="contained"
+                                    color="primary"
+                                    onClick={handleNext}
+                                    disabled={isNextButtonDisabled}
+                                    className={classes.button}>
+                                    {nextButtonText}
+                                </Button>
+                            </div>
+                        }
                     </Paper>
                 </main>
             </div>

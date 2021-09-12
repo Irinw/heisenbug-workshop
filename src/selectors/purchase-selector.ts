@@ -2,14 +2,14 @@ import { AppState } from "../contracts/app-state.contracts";
 import { GroupedPurchase } from "../components/checkout/review.contracts";
 import { CatInfo } from "../api/contracts";
 import { MAX_COUNT_OF_PURCHASES } from "../constants/app.constants";
+import { createSelector } from "reselect";
 
-export const numberOfPurchasesSelector = (state: AppState) => state.purchases.length;
-export const purchasesSelector = (state: AppState) => state.purchases;
-export const purchaseTotalPrice = (state: AppState) => calculateTotalPurchasePrice(state.purchases);
+export const selectNofPurcnahses = (state: AppState) => state.purchases.length;
+export const selectPurchases = (state: AppState) => state.purchases;
 
-export const groupedPurchasesSelector = (state: AppState) => {
+export const purchaseTotalPrice = createSelector(selectPurchases, calculateTotalPurchasePrice);
+export const groupedPurchasesSelector = createSelector(selectPurchases, purchases => {
     const seen = new Set();
-    const purchases = state.purchases;
     const groupedPurchases: GroupedPurchase[] = [];
     purchases.forEach(purchase => {
         if (seen.has(purchase.id)) {
@@ -20,7 +20,7 @@ export const groupedPurchasesSelector = (state: AppState) => {
         seen.add(purchase.id);
     });
     return groupedPurchases.sort((x, y) => x.purchase.name.localeCompare(y.purchase.name));
-}
+});
 
 function calculateTotalPurchasePrice(purchases: CatInfo[]): number {
     let price = 0;
@@ -28,8 +28,8 @@ function calculateTotalPurchasePrice(purchases: CatInfo[]): number {
     return price;
 }
 
-export const canAddToPurchase = (cat: CatInfo)=> (state: AppState) => {
+export const canAddToPurchase = (cat: CatInfo) => createSelector(selectPurchases, purchases => {
     const different = new Set<string>();
-    state.purchases.forEach(p => different.add(p.id));
+    purchases.forEach(p => different.add(p.id));
     return different.size < MAX_COUNT_OF_PURCHASES || different.has(cat.id);
-}
+});

@@ -12,7 +12,7 @@ import {Badge, InputBase} from "@material-ui/core";
 import {useAppDispatch} from "../../configure-store";
 import {setSearchPattern} from "../../slices/search.slice";
 import {useSelector} from "react-redux";
-import {numberOfPurchasesSelector} from "../../selectors/purchase-selector";
+import {selectNofPurcnahses} from "../../selectors/purchase-selector";
 import {TopBarProps} from "./top-bar.contracts";
 
 const useStyles = makeStyles((theme) => ({
@@ -84,7 +84,7 @@ const useStyles = makeStyles((theme) => ({
 export default function TopBar(props: TopBarProps) {
   const classes = useStyles();
   const dispatch = useAppDispatch();
-  const numberOfPurchases = useSelector(numberOfPurchasesSelector);
+  const numberOfPurchases = useSelector(selectNofPurcnahses);
 
   const onSearch = useCallback(
       (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {

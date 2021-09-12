@@ -2,7 +2,8 @@ import { CircularProgress } from '@material-ui/core';
 import { makeStyles } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
 import React from 'react';
-import { OrderInfo } from '../../contracts/app-state.contracts';
+import { useSelector } from 'react-redux';
+import { selectOrderInfo } from '../../selectors/review-details-selector';
 
 const useStyles = makeStyles((theme) => ({
   spinner: {
@@ -11,8 +12,8 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
-export function OrderProcessing(props: OrderInfo): JSX.Element {
-  const { orderId, inProgress } = props;
+export function OrderProcessing(): JSX.Element {
+  const { orderId, inProgress } = useSelector(selectOrderInfo);
   const classes = useStyles();
 
   if (inProgress) {

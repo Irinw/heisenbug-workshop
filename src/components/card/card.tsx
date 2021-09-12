@@ -14,7 +14,7 @@ import ShoppingCart from '@material-ui/icons/ShoppingCart';
 import React from 'react';
 import { useSelector } from "react-redux";
 import { useAppDispatch } from "../../configure-store";
-import { canAddToPurchase, purchasesSelector } from "../../selectors/purchase-selector";
+import { canAddToPurchase, selectPurchases } from "../../selectors/purchase-selector";
 import { addPurchase, removePurchase } from "../../slices/purchase.slice";
 import { CardProps } from './card.contracts';
 import { SearchHighlighter } from "./search-highlighter";
@@ -64,7 +64,7 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function Card(props: CardProps) {
     const classes = useStyles();
     const dispatch = useAppDispatch();
-    const purchases = useSelector(purchasesSelector);
+    const purchases = useSelector(selectPurchases);
     const countOfPurchases = purchases.filter(purchase => purchase.id === props.id)?.length;
     const isAddButtonDisabled = !useSelector(canAddToPurchase(props));
 

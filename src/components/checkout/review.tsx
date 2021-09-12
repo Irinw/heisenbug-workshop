@@ -10,7 +10,7 @@ import RemoveIcon from '@material-ui/icons/Remove';
 import React from 'react';
 import { useSelector } from "react-redux";
 import { useAppDispatch } from '../../configure-store';
-import { addressDetailsSelector } from "../../selectors/address-details-selector";
+import { selectAddressDetails } from "../../selectors/address-details-selector";
 import { paymentDetailsSelector } from "../../selectors/payment-details-selector";
 import { groupedPurchasesSelector, purchaseTotalPrice } from "../../selectors/purchase-selector";
 import { addPurchase, removePurchase } from '../../slices/purchase.slice';
@@ -44,7 +44,7 @@ export default function Review() {
     const classes = useStyles();
     const groupedPurchases = useSelector(groupedPurchasesSelector);
     const totalPrice = useSelector(purchaseTotalPrice);
-    const addressDetails = useSelector(addressDetailsSelector);
+    const addressDetails = useSelector(selectAddressDetails);
     const paymentDetails = useSelector(paymentDetailsSelector);
 
     return (

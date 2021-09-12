@@ -1,10 +1,15 @@
-import { CatInfo } from "../api/contracts";
+import { createSelector } from "reselect";
 import { AppState } from "../contracts/app-state.contracts";
+import { selectPurchases } from "./purchase-selector";
 
-export const cardsSelector = (state: AppState) => state.cards;
-export const filteredCardsSelector = (state: AppState) => filterCards(state);
+export const selectSearch = (state: AppState) => state.search;
+export const selectCards = (state: AppState) => state.cards;
 
-function filterCards({ cards, search, purchases }: AppState): CatInfo[] {
+export const selectFileterdCards = createSelector(
+    selectCards, 
+    selectSearch,
+    selectPurchases,
+    (cards, search, purchases) =>  {
     const searchPattern = search?.pattern?.toLowerCase();
     return searchPattern ? cards.filter(card =>
         purchases.some(p => p.id === card.id) ||
@@ -12,4 +17,4 @@ function filterCards({ cards, search, purchases }: AppState): CatInfo[] {
         card.description.toLowerCase().includes(searchPattern) ||
         card.temperament.toLowerCase().includes(searchPattern))
         : cards
-}
+});

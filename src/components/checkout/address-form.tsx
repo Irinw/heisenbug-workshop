@@ -14,14 +14,14 @@ import {
     setZipCode
 } from "../../slices/address-details.slice";
 import {useSelector} from "react-redux";
-import {addressDetailsSelector} from "../../selectors/address-details-selector";
+import {selectAddressDetails} from "../../selectors/address-details-selector";
 
 export default function AddressForm() {
     const dispatch = useAppDispatch();
 
     const { firstName, lastName, addressLine1, addressLine2,
         zipCode, city, state, country
-    } = useSelector(addressDetailsSelector);
+    } = useSelector(selectAddressDetails);
 
     const setFirstNameCallback = useCallback(
         (event: ChangeEvent<HTMLTextAreaElement | HTMLInputElement>) => {
