@@ -2,7 +2,7 @@ import { AppState } from "../contracts/app-state.contracts";
 import { GroupedPurchase } from "../components/checkout/review.contracts";
 import { CatInfo } from "../api/contracts";
 import { MAX_COUNT_OF_PURCHASES } from "../constants/app.constants";
-import { createSelector } from "reselect";
+import { createSelector } from "@reduxjs/toolkit";
 
 export const selectNofPurcnahses = (state: AppState) => state.purchases.length;
 export const selectPurchases = (state: AppState) => state.purchases;
