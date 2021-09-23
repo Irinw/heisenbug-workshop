@@ -32,8 +32,8 @@ const useStyles = makeStyles((theme: Theme) =>
             flex: '1 1 auto'
         },
         media: {
-            height: 0,
-            paddingTop: '56.25%', // 16:9
+            height: 300,
+            backgroundSize: 'contain',
         },
         expand: {
             transform: 'rotate(0deg)',
@@ -85,7 +85,7 @@ export default function Card(props: CardProps) {
             className={classes.root}
         >
             <CardHeader title={<SearchHighlighter text={props.name} />} subheader={price} />
-            <CardMedia className={classes.media} image={props.image?.url || 'cat1.jpg'} />
+            <CardMedia className={classes.media} image={props.image?.url || 'no_image.jpg'} />
             <CardContent className={classes.cardContent}>
                 <Typography variant="body1" color="secondary" component="p" className={classes.temperament}>
                     <SearchHighlighter text={props.temperament} />

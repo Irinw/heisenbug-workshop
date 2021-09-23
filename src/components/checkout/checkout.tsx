@@ -14,6 +14,7 @@ import { isAddressFormFilled as isAddressDetailsFormFilled } from '../../selecto
 import { isPaymentDetailsFormFilled } from '../../selectors/payment-details-selector';
 import { selectOrderInfo } from "../../selectors/review-details-selector";
 import AddressForm from './address-form';
+import Cart from "./cart";
 import { CheckoutProps } from "./checkout.contracts";
 import { OrderProcessing } from './order-processing';
 import PaymentForm from './payment-form';
@@ -59,17 +60,19 @@ const useStyles = makeStyles((theme) => ({
     },
 }));
 
-const steps = ['Review your order', 'Shipping address', 'Payment details', 'Order'];
+const steps = ['Cart', 'Shipping address', 'Payment details', 'Order summary'];
 
 function getStepContent(step: number) {
     switch (step) {
         case 0:
-            return <Review />;
+            return <Cart />;
         case 1:
             return <AddressForm />;
         case 2:
             return <PaymentForm />;
         case 3:
+            return <Review />;
+        case 4:
             return <OrderProcessing />;
         default:
             throw new Error('Unknown step');
@@ -86,7 +89,7 @@ export default function Checkout(props: CheckoutProps) {
     const isLastPage = activeStep === steps.length - 1;
     const isBackShown = activeStep !== 0;
     const isNextButtonDisabled = (!step1done && activeStep === 1) || (!step2done && activeStep === 2);
-    const nextButtonText = activeStep === 2 ? 'Place Order' : 'Next';
+    const nextButtonText = isLastPage ? 'Place Order' : 'Next';
 
     const orderInfo = useSelector(selectOrderInfo);
 
@@ -94,7 +97,7 @@ export default function Checkout(props: CheckoutProps) {
 
     const handleNext = () => {
         setActiveStep(activeStep + 1);
-        if (activeStep === 2) {
+        if (isLastPage) {
             dispatch({ type: 'SUBMIT_ORDER' });
         }
     };
@@ -127,7 +130,7 @@ export default function Checkout(props: CheckoutProps) {
                             ))}
                         </Stepper>
                         {getStepContent(activeStep)}
-                        {!isLastPage &&
+                        {steps.length > activeStep &&
                             <div className={classes.buttons}>
                                 {isBackShown && (
                                     <Button onClick={handleBack} className={classes.button}>
