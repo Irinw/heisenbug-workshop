@@ -1,23 +1,23 @@
-import React from 'react';
-import {makeStyles, Theme, createStyles} from '@material-ui/core/styles';
+import { Fab } from "@material-ui/core";
 import CardComponent from '@material-ui/core/Card';
+import CardActions from '@material-ui/core/CardActions';
+import CardContent from '@material-ui/core/CardContent';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardMedia from '@material-ui/core/CardMedia';
-import CardContent from '@material-ui/core/CardContent';
-import CardActions from '@material-ui/core/CardActions';
+import { red } from '@material-ui/core/colors';
 import IconButton from '@material-ui/core/IconButton';
+import { createStyles, makeStyles, Theme } from '@material-ui/core/styles';
 import Typography from '@material-ui/core/Typography';
-import {red} from '@material-ui/core/colors';
-import ShoppingCart from '@material-ui/icons/ShoppingCart';
-import {Fab} from "@material-ui/core";
 import AddIcon from '@material-ui/icons/Add';
 import RemoveIcon from '@material-ui/icons/Remove';
-import {CardProps} from './card.contracts';
-import {useAppDispatch} from "../../index";
-import {addPurchase, removePurchase} from "../../slices/purchase.slice";
-import {useSelector} from "react-redux";
-import {MAX_COUNT_OF_PURCHASES} from "../../constants/app.constants";
-import {numberOfPurchasesSelector, purchasesSelector} from "../../selectors/purchase-selector";
+import ShoppingCart from '@material-ui/icons/ShoppingCart';
+import React from 'react';
+import { useSelector } from "react-redux";
+import { useAppDispatch } from "../../configure-store";
+import { canAddToPurchase, selectPurchases } from "../../selectors/purchase-selector";
+import { addPurchase, removePurchase } from "../../slices/purchase.slice";
+import { CardProps } from './card.contracts';
+import { SearchHighlighter } from "./search-highlighter";
 
 const useStyles = makeStyles((theme: Theme) =>
     createStyles({
@@ -32,8 +32,8 @@ const useStyles = makeStyles((theme: Theme) =>
             flex: '1 1 auto'
         },
         media: {
-            height: 0,
-            paddingTop: '56.25%', // 16:9
+            height: 300,
+            backgroundSize: 'contain',
         },
         expand: {
             transform: 'rotate(0deg)',
@@ -54,6 +54,9 @@ const useStyles = makeStyles((theme: Theme) =>
         },
         actionText: {
             margin: 10
+        },
+        temperament: {
+            marginBottom: 10
         }
     }),
 );
@@ -61,10 +64,9 @@ const useStyles = makeStyles((theme: Theme) =>
 export default function Card(props: CardProps) {
     const classes = useStyles();
     const dispatch = useAppDispatch();
-    const purchases = useSelector(purchasesSelector);
+    const purchases = useSelector(selectPurchases);
     const countOfPurchases = purchases.filter(purchase => purchase.id === props.id)?.length;
-    const totalCountOfPurchases = useSelector(numberOfPurchasesSelector);
-    const isAddButtonDisabled = totalCountOfPurchases >= MAX_COUNT_OF_PURCHASES;
+    const isAddButtonDisabled = !useSelector(canAddToPurchase(props));
 
     const addPurchaseCallback = () => {
         dispatch(addPurchase(props));
@@ -82,53 +84,49 @@ export default function Card(props: CardProps) {
             key={props.id}
             className={classes.root}
         >
-            <CardHeader
-                title={props.name}
-                subheader={price}
-            />
-            <CardMedia
-                className={classes.media}
-                image={props.image?.url || 'cat1.jpg'}
-                title="Paella dish"
-            />
+            <CardHeader title={<SearchHighlighter text={props.name} />} subheader={price} />
+            <CardMedia className={classes.media} image={props.image?.url || 'no_image.jpg'} />
             <CardContent className={classes.cardContent}>
+                <Typography variant="body1" color="secondary" component="p" className={classes.temperament}>
+                    <SearchHighlighter text={props.temperament} />
+                </Typography>
                 <Typography variant="body2" color="textSecondary" component="p">
-                    {props.temperament}
+                    <SearchHighlighter text={props.description} />
                 </Typography>
             </CardContent>
             <CardActions disableSpacing className={classes.actionContainer}>
                 {showShoppingCart &&
-                <IconButton
-                    aria-label="add to favorites"
-                    onClick={addPurchaseCallback}
-                    disabled={ isAddButtonDisabled }
-                >
-                    <ShoppingCart/>
-                </IconButton>
+                    <IconButton
+                        aria-label="add to favorites"
+                        onClick={addPurchaseCallback}
+                        disabled={isAddButtonDisabled}
+                    >
+                        <ShoppingCart />
+                    </IconButton>
                 }
                 {!showShoppingCart &&
-                <>
-                    <Fab
-                        size="small"
-                        color="primary"
-                        aria-label="add"
-                        onClick={addPurchaseCallback}
-                        disabled={ isAddButtonDisabled }
-                    >
-                        <AddIcon/>
-                    </Fab>
-                    <Typography
-                        className={classes.actionText}
-                        variant="overline"
-                        display="block"
-                        gutterBottom
-                    >
-                        { countOfPurchases } cats
-                    </Typography>
-                    <Fab size="small" color="primary" aria-label="remove" onClick={removePurchaseCallback}>
-                        <RemoveIcon/>
-                    </Fab>
-                </>
+                    <>
+                        <Fab
+                            size="small"
+                            color="primary"
+                            aria-label="add"
+                            onClick={addPurchaseCallback}
+                            disabled={isAddButtonDisabled}
+                        >
+                            <AddIcon />
+                        </Fab>
+                        <Typography
+                            className={classes.actionText}
+                            variant="overline"
+                            display="block"
+                            gutterBottom
+                        >
+                            {countOfPurchases} cats
+                        </Typography>
+                        <Fab size="small" color="primary" aria-label="remove" onClick={removePurchaseCallback}>
+                            <RemoveIcon />
+                        </Fab>
+                    </>
                 }
             </CardActions>
         </CardComponent>

@@ -1,6 +1,6 @@
 import {createSlice, PayloadAction} from "@reduxjs/toolkit";
+import { CatInfo } from "../api/contracts";
 import {initialState} from "./initial-state";
-import {CatInfo} from "../components/card/card.contracts";
 
 const purchaseSlice = createSlice({
     name: 'purchases',
@@ -15,8 +15,11 @@ const purchaseSlice = createSlice({
                 state.splice(index, 1);
             }
         },
+        clearPurchase(state: CatInfo[]) {
+            state.length = 0;
+        }
     },
 });
 
 export default purchaseSlice.reducer;
-export const { addPurchase, removePurchase } = purchaseSlice.actions;
+export const { addPurchase, removePurchase, clearPurchase } = purchaseSlice.actions;

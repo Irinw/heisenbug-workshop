@@ -1,23 +1,8 @@
-import {CATS_API_URL} from "../constants/api-constants";
-import {setCards} from "../slices/cards.slice";
-import {put} from 'redux-saga/effects'
-import {CatInfo, ICard} from "../components/card/card.contracts";
+import { call, put } from 'redux-saga/effects';
+import { AppApi, CatInfo } from "../api/contracts";
+import { setCards } from "../slices/cards.slice";
 
-export function* cardsSaga() {
-    const response: Response = yield fetch(
-        CATS_API_URL
-    );
-    const serverData: ICard[] = yield response.json();
-    const cards: CatInfo[] = convertServerDataToCatInfo(serverData);
+export function* cardsSaga(api: AppApi) {
+    const cards: CatInfo[] = yield call(api.getCats.bind(api));
     yield put(setCards(cards));
-}
-
-function convertServerDataToCatInfo(serverData: ICard[]): CatInfo[] {
-    return serverData.map(item => ({
-        id: item.id,
-        name: item.name,
-        image: item.image,
-        price: item.adaptability * 100,
-        temperament: item.temperament,
-    }));
 }

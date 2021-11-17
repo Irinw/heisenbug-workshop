@@ -1,4 +1,4 @@
-import {CatInfo} from "../card/card.contracts";
+import {CatInfo} from "../../api/contracts";
 
 export interface GroupedPurchase {
     purchase: CatInfo;

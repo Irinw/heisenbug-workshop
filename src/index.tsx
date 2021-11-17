@@ -1,23 +1,11 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
-import App from './App';
-import {applyMiddleware, createStore} from "@reduxjs/toolkit";
-import {rootReducer} from "./slices/root.reducer";
-import {Provider, useDispatch} from 'react-redux'
-import createSagaMiddleware from 'redux-saga';
-import {rootSaga} from "./sagas/root.saga";
+import { configureStore } from './configure-store';
+import { AppComponent } from './create-app-component';
 
-const sagaMiddleware = createSagaMiddleware();
-const store = createStore(rootReducer, applyMiddleware(sagaMiddleware));
-sagaMiddleware.run(rootSaga)
-export type AppDispatch = typeof store.dispatch;
-export const useAppDispatch = () => useDispatch<AppDispatch>();
+const store = configureStore();
 
 ReactDOM.render(
-    <React.StrictMode>
-        <Provider store={store}>
-            <App/>
-        </Provider>
-    </React.StrictMode>,
+    <AppComponent store={store} />,
     document.getElementById('root')
 );

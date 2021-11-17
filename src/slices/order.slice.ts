@@ -1,6 +1,6 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {initialState} from "./initial-state";
-import {OrderInfo} from "../contracts/app-state.contracts";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { initialState } from "./initial-state";
+import { OrderInfo } from "../contracts/app-state.contracts";
 
 const orderSlice = createSlice({
     name: 'order',

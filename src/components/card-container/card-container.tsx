@@ -2,7 +2,7 @@ import React from 'react';
 import Card from "../card/card";
 import {createStyles, makeStyles} from "@material-ui/core/styles";
 import {useSelector} from "react-redux";
-import {filteredCardsSelector} from "../../selectors/cards-selector";
+import {selectFileterdCards} from "../../selectors/cards-selector";
 
 const useStyles = makeStyles(() =>
     createStyles({
@@ -19,7 +19,7 @@ const useStyles = makeStyles(() =>
 
 export default function CardContainer() {
     const classes = useStyles();
-    const items = useSelector(filteredCardsSelector);
+    const items = useSelector(selectFileterdCards);
 
     if(!items || !items.length){
         return null;
@@ -27,11 +27,7 @@ export default function CardContainer() {
 
     return (
         <div className={classes.cardContainer}>
-            {items.map(item =>
-                <Card
-                    {...item}
-                />
-            )}
+            {items.map(item => <Card key={item.id} {...item} /> )}
         </div>
     );
 }

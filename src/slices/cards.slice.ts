@@ -1,6 +1,6 @@
-import {createSlice, PayloadAction} from "@reduxjs/toolkit";
-import {initialState} from "./initial-state";
-import {CatInfo} from "../components/card/card.contracts";
+import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { CatInfo } from "../api/contracts";
+import { initialState } from "./initial-state";
 
 const cardsSlice = createSlice({
     name: 'cards',
